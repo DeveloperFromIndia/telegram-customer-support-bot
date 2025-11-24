@@ -1,0 +1,24 @@
+{
+  "name": "telegram-customer-support-bot",
+  "scripts": {
+    "dev": "bun --watch index.ts",
+    "build": "bun build index.ts --outdir dist --target node",
+    "start": "bun run index.ts"
+  },
+  "dependencies": {
+    "@grammyjs/i18n": "^1.1.2",
+    "grammy": "^1.38.4",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.3",
+    "@types/node": "^24.10.1",
+    "@types/sqlite3": "^5.1.0",
+    "dotenv": "^17.2.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
