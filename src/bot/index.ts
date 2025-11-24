@@ -1,10 +1,23 @@
 import { Bot } from "grammy";
+import HandlersWrapper from "./handlers/wrapper";
 
-const bot = process.env.BOT_TOKEN ? new Bot(process.env.BOT_TOKEN) : null;
+// Commands
+import startCommand from "./handlers/commands/start";
+import i18n, { type ConfigContext } from "i18n/config";
+import localeMiddleware from "@/middleware/locale";
+
+const bot = process.env.BOT_TOKEN ? new Bot<ConfigContext>(process.env.BOT_TOKEN) : null;
 
 const setupBot = () => {
     if (!bot)
         throw console.error("Token not found");
+
+    bot.use(i18n.middleware());
+    bot.use(localeMiddleware)
+
+    HandlersWrapper([
+        startCommand
+    ], bot);
 
     return bot;
 }
