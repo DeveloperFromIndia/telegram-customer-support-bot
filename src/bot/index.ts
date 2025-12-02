@@ -6,6 +6,8 @@ import startCommand from "./handlers/commands/start";
 import i18n, { type ConfigContext } from "i18n/config";
 import localeMiddleware from "@/middleware/locale";
 import phoneRequest from "./handlers/message/phoneRequest";
+import plugCallback from "./handlers/callback/plug";
+import clientsMessage from "./handlers/message/clients";
 
 const bot = process.env.BOT_TOKEN ? new Bot<ConfigContext>(process.env.BOT_TOKEN) : null;
 
@@ -22,7 +24,12 @@ const setupBot = () => {
     ], bot);
     // Messages
     HandlersWrapper([
-        phoneRequest
+        phoneRequest,
+        clientsMessage,
+    ], bot);
+    // Callbacks
+    HandlersWrapper([
+        plugCallback
     ], bot);
 
     return bot;
