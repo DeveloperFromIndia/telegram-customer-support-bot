@@ -3,6 +3,7 @@ import { profileActionsKeyboard } from "@/bot/keyboards/reply/profileActions.key
 import accessMiddleware from "@/middleware/access";
 import callService from "@/services/call.service";
 import userService from "@/services/user.service";
+import { sendMessage } from "@/utils/messages";
 import type { paginationDataType } from "@/utils/pagination";
 import { hears } from "@grammyjs/i18n";
 import { Bot } from "grammy";
@@ -39,6 +40,8 @@ const managerMessage = (bot: Bot<ConfigContext>) => {
         await ctx.reply("finish hardcode message", {
             reply_markup: await profileActionsKeyboard(ctx.t, telegramId)
         })
+        // call end msg
+        await sendMessage(call.clientId, "hardcode msg", await profileActionsKeyboard(ctx.t, call.clientId));
     });
     bot.filter(hears("calls_action_rollup"), accessMiddleware, async (ctx) => {
         const telegramId = ctx.chat.id;

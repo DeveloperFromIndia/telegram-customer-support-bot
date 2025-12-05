@@ -11,9 +11,8 @@ const clientsMessage = (bot: Bot<ConfigContext>) => {
     bot.filter(hears("request_call"), async (ctx) => {
         const telegramId = ctx.chat.id;
         const [_, status] = await callService.create(null, telegramId);
-        console.log(status);
         if (status) {
-            console.log(status);            
+            console.log("status:", status);            
             await ctx.reply(ctx.t("concierge-auto-reply"), {
                 reply_markup: {
                     remove_keyboard: true
@@ -25,7 +24,6 @@ const clientsMessage = (bot: Bot<ConfigContext>) => {
             
             return await sendMessage(GROUP_ID, "test msg");
         }
-        console.log("end");
     });
 };
 

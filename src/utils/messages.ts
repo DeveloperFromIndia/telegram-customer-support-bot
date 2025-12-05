@@ -28,7 +28,9 @@ export const transferMessageToAnotherChat = async (telegramId: number, ctx: any)
     }
 }
 
-export const sendMessage = async (chatId: number, txt: string) => {
-    const msg = await bot.api.sendMessage(chatId, txt);
+export const sendMessage = async (chatId: number, txt: string, kb?: any) => {
+    const msg = await bot.api.sendMessage(chatId, txt, {
+        reply_markup: kb
+    });
     return msg;
 }
