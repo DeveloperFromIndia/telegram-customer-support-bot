@@ -15,6 +15,7 @@ import plugCallback from "./handlers/callback/plug";
 import managerActionsCallback from "./handlers/callback/managerActions";
 import clientsMessage from "./handlers/message/clientsActions";
 import transferMessage from "./handlers/message/call";
+import getChatIdCommand from "./handlers/commands/getChatId";
 
 
 const bot = process.env.BOT_TOKEN ? new Bot<ConfigContext>(process.env.BOT_TOKEN) : null;
@@ -28,7 +29,8 @@ const setupBot = () => {
 
     // Commands
     HandlersWrapper([
-        startCommand
+        startCommand,
+        getChatIdCommand
     ], bot);
     // Callbacks
     HandlersWrapper([

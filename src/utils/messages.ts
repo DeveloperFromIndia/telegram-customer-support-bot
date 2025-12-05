@@ -1,6 +1,6 @@
 import bot from "index";
 
-export const sendMessage = async (telegramId: number, ctx: any) => {
+export const transferMessageToAnotherChat = async (telegramId: number, ctx: any) => {
 
     switch (true) {
         case typeof ctx.message?.text === "string":
@@ -28,3 +28,7 @@ export const sendMessage = async (telegramId: number, ctx: any) => {
     }
 }
 
+export const sendMessage = async (chatId: number, txt: string) => {
+    const msg = await bot.api.sendMessage(chatId, txt);
+    return msg;
+}

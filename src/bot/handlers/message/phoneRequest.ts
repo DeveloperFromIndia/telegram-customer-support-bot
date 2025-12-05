@@ -49,14 +49,14 @@ const phoneRequest = (bot: Bot<ConfigContext>) => {
                 throw error;
             });
 
-            const userData = new UserDto({
-                telegramId: user_id,
+            const userData = {
+                id: user_id,
                 name: first_name,
                 username: ctx.from.username,
                 phone: phone_number,
                 blocked: false,
                 idInCRM: response.data.id,
-            });
+            };
             await userService.update(userData);
         }
 

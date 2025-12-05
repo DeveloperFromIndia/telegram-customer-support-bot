@@ -1,5 +1,5 @@
 import callService from "@/services/call.service";
-import { sendMessage } from "@/utils/messages";
+import { transferMessageToAnotherChat } from "@/utils/messages";
 import type { Bot } from "grammy";
 import type { ConfigContext } from "i18n/config";
 
@@ -18,7 +18,7 @@ const transferMessage = (bot: Bot<ConfigContext>) => {
                 const [status, code] = callData.status.split(":");
                 switch (status) {
                     case "open":
-                        const msg = await sendMessage(callData.managerId, ctx);
+                        const msg = await transferMessageToAnotherChat(callData.managerId, ctx);
                         break;
                     case "rolledup":
 
@@ -27,7 +27,7 @@ const transferMessage = (bot: Bot<ConfigContext>) => {
                 break;
             // message to manager
             case callData.managerId:
-                const msg = await sendMessage(callData.clientId, ctx);
+                const msg = await transferMessageToAnotherChat(callData.clientId, ctx);
                 break;
         }
     });
