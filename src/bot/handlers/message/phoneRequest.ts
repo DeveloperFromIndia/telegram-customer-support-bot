@@ -13,7 +13,6 @@ const phoneRequest = (bot: Bot<ConfigContext>) => {
 
         const user = await userService.find(user_id);
         const { data } = await getPeople({ options: { phones: phone_number } }).catch(error => {
-            console.error(error);
             ctx.reply("Something went wrong");
             throw error;
         });
@@ -22,15 +21,15 @@ const phoneRequest = (bot: Bot<ConfigContext>) => {
             const userInCRM = data.data[0];
             const managerStatus = userInCRM.tags.find((tag: any) => tag.name === "manager");
 
-            const userData = new UserDto({
-                telegramId: user_id,
+            const userData = {
+                id: user_id,
                 name: first_name,
                 username: ctx.from.username,
                 phone: phone_number,
                 blocked: false,
                 idInCRM: userInCRM.id,
                 isManager: !!managerStatus,
-            });
+            };
 
             await userService.update(userData);
         } else {
