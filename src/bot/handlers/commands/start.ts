@@ -4,6 +4,7 @@ import userService from "@/services/user.service";
 import { Bot } from "grammy";
 import { type ConfigContext } from "i18n/config";
 import { type UserDto } from "@/dto/user.dto";
+import updateRoles from "@/utils/roles";
 
 const startCommand = (bot: Bot<ConfigContext>) => {
     bot.command("start", async (ctx) => {
@@ -12,7 +13,7 @@ const startCommand = (bot: Bot<ConfigContext>) => {
             return ctx.reply("Something went wrong");
 
         const [result, _] = await userService.create({ telegramId });
-
+        await updateRoles(telegramId);
         // Registration
         if (result.idInCRM < 0) {
             return await ctx.reply(ctx.t("request_contact_title"), {
