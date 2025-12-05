@@ -1,42 +1,20 @@
+import { type paginationDataResultType } from "@/utils/pagination";
+import { InlineKeyboard } from "grammy";
 
+const paginatedData = (page: number, title: any, data: paginationDataResultType) => {
+    const kb = new InlineKeyboard();
 
-// type paginationDataType = {
-//     model: any,
-//     page: number,
-//     count: number,
-//     filters: any,
-//     order: [string, string],
-//     include: any[],
-//     url: string,
-// }
-// async function getPaginatedData({
-//     model,
-//     page = 1,
-//     count = 10,
-//     filters = {},
-//     order = ["id", "DESC"],
-//     include = [],
-//     url = "",
-// }: paginationDataType) {
-//     const offset = (page - 1) * count;
+    // Result
+    for (const item of data.result) {
+        kb.text(title(item), `${item.id}:${data.url}`).row();
+    }
 
-//     const total_pages = Math.ceil(await model.count() / count);
-//     const res = await model.findAll({
-//         offset,
-//         where: { ...filters },
-//         order: [order],
-//     })
+    // Navigation
+    kb.row();
+    data.links.prev ? kb.text('➡️', data.links.prev) : kb.text('⏺️', 'plug');
+    data.links.next ? kb.text('⬅️', data.links.next) : kb.text('⏺️', 'plug');
 
-//     return {
-//         page,
-//         total_pages,
-//         total_count: res.length,
-//         result: res.map(p => p.toJSON()),
-//         links: {
-//             prev: page - 1 > 0 ? `${url} ${page - 1}` : null,
-//             next: page - 1 > 0 ? `${url} ${page - 1}` : null,
-//         },
-//     }
-// }
+    return kb;
+}
 
-// module.exports = getPaginatedData;
+export default paginatedData;

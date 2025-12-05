@@ -1,13 +1,21 @@
 import { Bot } from "grammy";
 import HandlersWrapper from "./handlers/wrapper";
+import i18n, { type ConfigContext } from "i18n/config";
 
+// Middleware
+import localeMiddleware from "@/middleware/locale";
+// import blockedMiddleware from "@/middleware/blocked";
 // Commands
 import startCommand from "./handlers/commands/start";
-import i18n, { type ConfigContext } from "i18n/config";
-import localeMiddleware from "@/middleware/locale";
+// Messages
 import phoneRequest from "./handlers/message/phoneRequest";
+import managerMessage from "./handlers/message/managerActions";
+// Callback's
 import plugCallback from "./handlers/callback/plug";
-import clientsMessage from "./handlers/message/clients";
+import managerActionsCallback from "./handlers/callback/managerActions";
+import clientsMessage from "./handlers/message/clientsActions";
+import transferMessage from "./handlers/message/call";
+
 
 const bot = process.env.BOT_TOKEN ? new Bot<ConfigContext>(process.env.BOT_TOKEN) : null;
 
@@ -22,16 +30,19 @@ const setupBot = () => {
     HandlersWrapper([
         startCommand
     ], bot);
+    // Callbacks
+    HandlersWrapper([
+        plugCallback,
+        managerActionsCallback,
+    ], bot);
     // Messages
     HandlersWrapper([
         phoneRequest,
-        clientsMessage,
+        managerMessage,
+        clientsMessage, 
+        transferMessage,
     ], bot);
-    // Callbacks
-    HandlersWrapper([
-        plugCallback
-    ], bot);
-
     return bot;
 }
+
 export default setupBot;

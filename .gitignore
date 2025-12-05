@@ -16,6 +16,7 @@ yarn-error.log*
 bun-debug.log*
 logs/
 *.log
+archive/*.txt
 
 # OS junk
 .DS_Store

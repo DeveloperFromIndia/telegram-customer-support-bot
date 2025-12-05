@@ -1,5 +1,7 @@
 import UserModel from "@/database/models/User";
 import type { UserDto } from "@/dto/user.dto";
+import getPaginatedData, { type paginationDataType } from "@/utils/pagination";
+import { Op } from "sequelize";
 
 class UserService {
     /* true - status: 200 */
@@ -14,28 +16,43 @@ class UserService {
         return [result, created];
     }
 
-    async find(telegramId: number) {
+    async find(id: number) {
         const user = await UserModel.findOne({
-            where: { telegramId },
+            where: {
+                [Op.or]: [
+                    { telegramId: id },
+                    { id: id }
+                ],
+            }
         });
 
         return !user ? null : user.toJSON();
     }
 
-    async update(data: UserDto) {
-        const user = await UserModel.findOne({ where: { telegramId: data.telegramId } });
-        if (!user) return null;
-        const updateData: Partial<UserDto> = {
-            name: data.name,
-            username: data.username,
-            phone: data.phone,
-            blocked: data.blocked,
-            idInCRM: data.idInCRM,
-            isManager: data.isManager
-        };
+    async getPage({ page, count, order, filters, url }: paginationDataType) {
+        return await getPaginatedData({
+            model: UserModel,
+            page,
+            count,
+            filters,
+            order,
+            url,
+            include: []
+        })
+    }
 
-        const res = (await user.update(updateData));
-        return res.toJSON();
+    async update(data: any) {
+        const { id, ...rest } = data;
+        const user = await UserModel.findOne({
+            where: {
+                [Op.or]: [
+                    { telegramId: id },
+                    { id: id }
+                ],
+            }
+        });
+        (await user?.update(rest));
+        return user;
     }
 }
 

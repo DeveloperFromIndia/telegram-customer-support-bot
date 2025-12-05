@@ -50,11 +50,15 @@ const phoneRequest = (bot: Bot<ConfigContext>) => {
                 throw error;
             });
 
-            await userService.create({
+            const userData = new UserDto({
                 telegramId: user_id,
+                name: first_name,
+                username: ctx.from.username,
                 phone: phone_number,
-                inInCRM: response.data.id || -1
-            })
+                blocked: false,
+                idInCRM: response.data.id,
+            });
+            await userService.update(userData);
         }
 
         await ctx.reply(ctx.t("finished_comparing_contact"), {
