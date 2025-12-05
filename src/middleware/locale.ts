@@ -1,6 +1,6 @@
 import { DEFAULT_LOCALE, type ConfigContext } from "i18n/config";
 
-const localeWhitelist = ["en", "ru", "uk"];
+const localeWhitelist = ["en", "uk"];
 
 const localeMiddleware = async (ctx: ConfigContext, next: () => Promise<void>) => {
     const userLocale = ctx.from?.language_code ?? DEFAULT_LOCALE;
