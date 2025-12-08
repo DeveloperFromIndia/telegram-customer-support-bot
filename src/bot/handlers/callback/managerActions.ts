@@ -1,6 +1,7 @@
 import { actionsOnTheCall } from "@/bot/keyboards/inline/calls";
 import { actionsOnTheClient } from "@/bot/keyboards/inline/clients";
 import { actionsInTheCall } from "@/bot/keyboards/reply/callsActions.keyboard";
+import { callView } from "@/bot/view/calls";
 import clientView from "@/bot/view/clients";
 import { UserDto } from "@/dto/user.dto";
 import accessMiddleware from "@/middleware/access";
@@ -12,13 +13,14 @@ import type { ConfigContext } from "i18n/config"
 
 
 const managerActionsCallback = (bot: Bot<ConfigContext>) => {
-    // 
+    // Connect in call
     bot.callbackQuery(/^(\d+):c_call$/, async (ctx) => {
-        const telegramId = ctx.chat?.id;
+        const telegramId = Number(ctx.chat?.id);
         try {
             const id = Number(ctx.match[1]);
-            const call = await callService.inCall(id);
-            if (call && call.managerId === null || call.managerId === ctx.chat?.id) {
+            const call = await callService.find(id);
+
+            if (call && call.managerId === null || call.managerId === telegramId) {
                 const updateRes = await callService.update({
                     id: call.id,
                     managerId: telegramId,
@@ -37,7 +39,7 @@ const managerActionsCallback = (bot: Bot<ConfigContext>) => {
 
             await ctx.answerCallbackQuery();
         } catch (error) {
-
+            await ctx.answerCallbackQuery();
         }
     });
     // Get call info
@@ -45,15 +47,18 @@ const managerActionsCallback = (bot: Bot<ConfigContext>) => {
         try {
             const id = Number(ctx.match[1]);
             const call = await callService.find(id);
+            const client = await userService.find(call.clientId);
 
-            if (call)
-                await ctx.reply(call, {
-                    reply_markup: actionsOnTheCall(call.clientId, ctx.t)
+            if (call) {
+                const text = callView({ ...call, client }, ctx.t);
+                await ctx.reply(text || "test", {
+                    reply_markup: actionsOnTheCall(call.id, ctx.t)
                 });
+            }
 
             await ctx.answerCallbackQuery();
         } catch (error) {
-
+            await ctx.answerCallbackQuery();
         }
     });
     // Get user info

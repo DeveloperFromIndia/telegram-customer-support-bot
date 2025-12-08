@@ -5,12 +5,11 @@ import sequelize from "@/database/config";
     Статусы звоноков
     - Открыт:
     - Закрыт:
-    - Свернут:(запиьс в текстовый файл + выдача сообщений менеджеру по повторному открытию с таймкодами)
 */
 
 const CallModel = sequelize.define("bot_call", {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    clientId: { type: DataTypes.INTEGER, allowNull: false },
+    clientId: { type: DataTypes.INTEGER, allowNull: true },
     managerId: { type: DataTypes.INTEGER, allowNull: true },
     status: { type: DataTypes.STRING, defaultValue: "waiting" },
     title: { type: DataTypes.STRING },

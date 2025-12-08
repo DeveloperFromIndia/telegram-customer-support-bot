@@ -5,7 +5,6 @@ export const actionsInTheCall = (
 ) => {
     const kb = new Keyboard()
         .text(t("calls_action_finish"))
-        .text(t("calls_action_rollup"))
         .resized();
     return kb;
 }

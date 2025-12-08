@@ -4,7 +4,6 @@ export type paginationDataType = {
     count: number,
     filters?: any,
     order?: [string, string],
-    include?: any[],
     url: string,
 }
 
@@ -25,7 +24,6 @@ async function getPaginatedData({
     count = 10,
     filters = {},
     order = ["id", "DESC"],
-    include = [],
     url = "",
 }: paginationDataType) {
     const offset = (page - 1) * count;
@@ -35,7 +33,6 @@ async function getPaginatedData({
         offset,
         where: { ...filters },
         order: [order],
-        include: include
     })
 
     return {

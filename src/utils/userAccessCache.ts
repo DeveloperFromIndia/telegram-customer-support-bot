@@ -10,12 +10,14 @@ const userCache = new Map<number, UserCache>();
 const CACHE_TTL = 60_000; // 1 минута
 
 async function userAccessCache(ctx: any, next: () => Promise<void>) {
-    let telegramId = ctx.message.from.id;
+    let telegramId = ctx.chat.id;
     let cache = userCache.get(telegramId);
     const now = Date.now();
 
     if (!cache || cache.expiresAt < now) {
         const user = await userService.find(telegramId);
+        // if (!user)
+            // return next();
         cache = {
             isManager: user.isManager,
             blocked: user.blocked,
@@ -24,7 +26,7 @@ async function userAccessCache(ctx: any, next: () => Promise<void>) {
         userCache.set(telegramId, cache);
     }
 
-    (ctx as any).isManager = cache.isManager;
+    (ctx as any).isManager = cache.isManager || false;
     await next();
 }
 

@@ -11,7 +11,6 @@ clients_action_block = Заблокувати
 clients_action_unblock = Розблокувати
 clients_action_call = Зателефонувати
 calls_action_finish = Завершити
-calls_action_rollup = Підсумувати
 calls = 🎙 Дзвінки
 calls_action_open = Відкрити
 tarifs = 🗂 Тарифи

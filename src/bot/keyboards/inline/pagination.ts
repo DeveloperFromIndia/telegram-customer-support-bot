@@ -6,7 +6,8 @@ const paginatedData = (page: number, title: any, data: paginationDataResultType)
 
     // Result
     for (const item of data.result) {
-        kb.text(title(item), `${item.id}:${data.url}`).row();
+        const callbackData = `${item.id}:${data.url}`;
+        kb.text(title(item), callbackData).row();
     }
 
     // Navigation

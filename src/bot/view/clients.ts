@@ -1,5 +1,3 @@
-import type { UserDto } from "@/dto/user.dto";
-
 const clientView = (
   data: any,
   t: (key: string) => string

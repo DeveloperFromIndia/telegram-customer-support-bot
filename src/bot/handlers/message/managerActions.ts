@@ -1,5 +1,6 @@
 import paginatedData from "@/bot/keyboards/inline/pagination";
 import { profileActionsKeyboard } from "@/bot/keyboards/reply/profileActions.keyboard";
+import { paginatedCalls } from "@/bot/view/calls";
 import accessMiddleware from "@/middleware/access";
 import callService from "@/services/call.service";
 import userService from "@/services/user.service";
@@ -15,8 +16,7 @@ const managerMessage = (bot: Bot<ConfigContext>) => {
         const res = await callService.getPage(params);
 
         // include profiile data
-        const format = (item: any) => `${item.clientId}`;
-        const kb = paginatedData(1, format, res);
+        const kb = await paginatedCalls(1);
 
         return await ctx.reply("calls", {
             reply_markup: kb,
@@ -34,24 +34,20 @@ const managerMessage = (bot: Bot<ConfigContext>) => {
         });
     });
     bot.filter(hears("calls_action_finish"), accessMiddleware, async (ctx) => {
-        const telegramId = ctx.chat.id;
+        const telegramId = Number(ctx.chat.id);
         const call = await callService.inCall(telegramId);
-        await callService.update({ id: call.id, status: "finish" });
-        await ctx.reply("finish hardcode message", {
-            reply_markup: await profileActionsKeyboard(ctx.t, telegramId)
-        })
-        // call end msg
-        await sendMessage(call.clientId, "hardcode msg", await profileActionsKeyboard(ctx.t, call.clientId));
-    });
-    bot.filter(hears("calls_action_rollup"), accessMiddleware, async (ctx) => {
-        const telegramId = ctx.chat.id;
-        const call = await callService.inCall(telegramId);
-        await callService.update({ id: call.id, status: "waiting" });
-        await ctx.reply("rollup hardcode message", {
-            reply_markup: await profileActionsKeyboard(ctx.t, telegramId)
-        })
+
+        if (call) {
+            await callService.update({ id: call.id, status: "finish" });
+            await ctx.reply("finish hardcode message", {
+                reply_markup: await profileActionsKeyboard(ctx.t, telegramId)
+            })
+
+            await sendMessage(call.clientId, { text: "hardcode msg" }, await profileActionsKeyboard(ctx.t, call.clientId));
+        }
     });
     bot.filter(hears("tarifs"), accessMiddleware, async (ctx) => {
+        // 
         return await ctx.reply("functional not implemented");
     });
     bot.filter(hears("payments"), accessMiddleware, async (ctx) => {

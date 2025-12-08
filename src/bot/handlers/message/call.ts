@@ -6,7 +6,7 @@ import type { ConfigContext } from "i18n/config";
 
 const transferMessage = (bot: Bot<ConfigContext>) => {
     bot.on("message", async (ctx) => {
-        const telegramId = ctx.chat.id;
+        const telegramId = Number(ctx.chat.id);
         const callData = await callService.inCall(telegramId);
         
         if (!telegramId || !callData)
@@ -20,7 +20,7 @@ const transferMessage = (bot: Bot<ConfigContext>) => {
                     case "open":
                         const msg = await transferMessageToAnotherChat(callData.managerId, ctx);
                         break;
-                    case "rolledup":
+                    case "waiting":
 
                         break;
                 }

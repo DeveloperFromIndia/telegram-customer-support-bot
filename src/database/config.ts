@@ -13,4 +13,7 @@ const config = new Sequelize(
     }
 );
 
+await config.authenticate();
+await config.query('PRAGMA foreign_keys = ON;');
+
 export default config;

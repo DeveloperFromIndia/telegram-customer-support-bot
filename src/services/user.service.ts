@@ -1,5 +1,4 @@
 import UserModel from "@/database/models/User";
-import type { UserDto } from "@/dto/user.dto";
 import getPaginatedData, { type paginationDataType } from "@/utils/pagination";
 import { Op } from "sequelize";
 
@@ -37,7 +36,6 @@ class UserService {
             filters,
             order,
             url,
-            include: []
         })
     }
 
