@@ -3,6 +3,7 @@ import { profileActionsKeyboard } from "@/bot/keyboards/reply/profileActions.key
 import { paginatedCalls } from "@/bot/view/calls";
 import accessMiddleware from "@/middleware/access";
 import callService from "@/services/call.service";
+import tarifService from "@/services/tarif.service";
 import userService from "@/services/user.service";
 import { sendMessage } from "@/utils/messages";
 import type { paginationDataType } from "@/utils/pagination";
@@ -47,8 +48,17 @@ const managerMessage = (bot: Bot<ConfigContext>) => {
         }
     });
     bot.filter(hears("tarifs"), accessMiddleware, async (ctx) => {
-        // 
-        return await ctx.reply("functional not implemented");
+        const params: paginationDataType = { page: 1, count: 10, url: "p_tarif" }
+        const res = await tarifService.getPage(params);
+
+        const format = (item: any) => `${item.days} - ${item.price}$`;
+        const kb = paginatedData(1, format, res, [
+            { text: ctx.t("add_tarifs"), callback_data: "a_tarif" }
+        ]);
+
+        return await ctx.reply("tarifs(hardcode msg)", {
+            reply_markup: kb,
+        });
     });
     bot.filter(hears("payments"), accessMiddleware, async (ctx) => {
         return await ctx.reply("functional not implemented");

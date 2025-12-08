@@ -3,11 +3,10 @@ import { actionsOnTheClient } from "@/bot/keyboards/inline/clients";
 import { actionsInTheCall } from "@/bot/keyboards/reply/callsActions.keyboard";
 import { callView } from "@/bot/view/calls";
 import clientView from "@/bot/view/clients";
-import { UserDto } from "@/dto/user.dto";
-import accessMiddleware from "@/middleware/access";
 import callService from "@/services/call.service";
 import userService from "@/services/user.service";
-import type { Bot } from "grammy"
+
+import { type Bot } from "grammy"
 import type { ConfigContext } from "i18n/config"
 
 
@@ -98,6 +97,17 @@ const managerActionsCallback = (bot: Bot<ConfigContext>) => {
                 }
             }
 
+            await ctx.answerCallbackQuery();
+        } catch (error) {
+
+        }
+    });
+
+    bot.callbackQuery("a_tarif", async (ctx: any) => {
+        try {
+            await ctx.conversation.enter("createTarifConversation");
+
+            // createTarifConversation
             await ctx.answerCallbackQuery();
         } catch (error) {
 

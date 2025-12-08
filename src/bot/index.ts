@@ -1,4 +1,4 @@
-import { Bot } from "grammy";
+import { Bot, session } from "grammy";
 import HandlersWrapper from "./handlers/wrapper";
 import i18n, { type ConfigContext } from "i18n/config";
 
@@ -16,6 +16,8 @@ import managerActionsCallback from "./handlers/callback/managerActions";
 import clientsMessage from "./handlers/message/clientsActions";
 import transferMessage from "./handlers/message/call";
 import getChatIdCommand from "./handlers/commands/getChatId";
+import { conversations, createConversation } from "@grammyjs/conversations";
+import { createTarifConversation } from "./handlers/scenes/tarif";
 
 
 const bot = process.env.BOT_TOKEN ? new Bot<ConfigContext>(process.env.BOT_TOKEN) : null;
@@ -26,6 +28,11 @@ const setupBot = () => {
 
     bot.use(i18n.middleware());
     bot.use(localeMiddleware)
+    // scenes
+    bot.use(session({ initial: () => ({}) }));
+    bot.use(conversations());
+    bot.use(createConversation(createTarifConversation));
+
 
     // Commands
     HandlersWrapper([
@@ -41,7 +48,7 @@ const setupBot = () => {
     HandlersWrapper([
         phoneRequest,
         managerMessage,
-        clientsMessage, 
+        clientsMessage,
         transferMessage,
     ], bot);
     return bot;

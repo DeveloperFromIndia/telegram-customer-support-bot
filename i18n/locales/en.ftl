@@ -14,6 +14,7 @@ calls_action_finish = Finish
 calls = 🎙 Calls
 calls_action_open = Open
 tarifs = 🗂 Tariffs
+add_tarifs = en-Add tarif 
 payments = 💳 Payments
 
 # -- client 
