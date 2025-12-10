@@ -1,43 +1,66 @@
+import tarifService from "@/services/tarif.service";
+import type { Conversation } from "@grammyjs/conversations";
+import { InlineKeyboard } from "grammy";
+import i18n, { DEFAULT_LOCALE } from "i18n/config";
 
-export async function createTarifConversation(
-  conversation: any,
-  ctx: any
-) {
-  // ===== ШАГ 1 — Цена =====
-  await ctx.reply("Введите цену тарифа:");
-  const priceMsg = await conversation.wait();
-  const price = Number(priceMsg.message?.text);
+export async function createTarifConversation(conversation: Conversation, ctx: any) {
+    const lang = ctx.update.callback_query.from.language_code || DEFAULT_LOCALE;
+    const t = (key: string) => i18n.t(lang, key);
 
-  if (isNaN(price) || price < 0) {
-    await ctx.reply("❌ Неверная цена. Попробуйте заново.");
-    return;
-  }
+    const cancelKeyboard = new InlineKeyboard()
+        .text("❌ Отменить", "cancel_tarif_creation");
 
-  // ===== ШАГ 2 — ID в CRM =====
-  await ctx.reply("Введите ID тарифа в CRM:");
-  const idMsg = await conversation.wait();
-  const idInCRM = Number(idMsg.message?.text);
+    await ctx.reply("Введите цену тарифа:", {
+        reply_markup: cancelKeyboard
+    });
 
-  if (isNaN(idInCRM)) {
-    await ctx.reply("❌ ID должен быть числом.");
-    return;
-  }
+    const priceCtx = await conversation.wait();
 
-  // ===== ШАГ 3 — Кол-во дней =====
-  await ctx.reply("Введите количество дней:");
-  const daysMsg = await conversation.wait();
-  const days = Number(daysMsg.message?.text);
+    if (priceCtx.message?.text === "/start") {
+        await ctx.reply("❌ Создание тарифа отменено");
+        return;
+    }
 
-  if (isNaN(days) || days < 1) {
-    await ctx.reply("❌ Количество дней должно быть больше 0.");
-    return;
-  }
+    if (priceCtx.callbackQuery?.data === "cancel_tarif_creation") {
+        await priceCtx.answerCallbackQuery();
+        await priceCtx.editMessageText("❌ Создание тарифа отменено");
+        return;
+    }
 
+    const price = Number(priceCtx.message?.text);
+    if (isNaN(price) || price <= 0) {
+        await ctx.reply("❌ Введите *валидную* цену!", { parse_mode: "Markdown" });
+        return;
+    }
 
-  await ctx.reply(
-    `✅ Тариф создан:\n\n` +
-      `💰 Цена: ${price}\n` +
-      `🆔 CRM ID: ${idInCRM}\n` +
-      `📅 Дней: ${days}`
-  );
+    await ctx.reply("Введите количество дней:", {
+        reply_markup: cancelKeyboard
+    });
+
+    const daysCtx = await conversation.wait();
+
+    if (daysCtx.message?.text === "/start") {
+        await ctx.reply("❌ Создание тарифа отменено");
+        return;
+    }
+
+    if (daysCtx.callbackQuery?.data === "cancel_tarif_creation") {
+        await daysCtx.answerCallbackQuery();
+        await daysCtx.editMessageText("❌ Создание тарифа отменено");
+        return;
+    }
+
+    const days = parseInt(daysCtx.message?.text || "0");
+    if (isNaN(days) || days <= 0) {
+        await ctx.reply("❌ Дней должно быть > 0!");
+        return;
+    }
+
+    if (price && days) {
+        const tarif = await tarifService.create({ price, days });
+        if (tarif)
+            return await ctx.reply(
+                `✅ Тариф создан:\n\n💰 Цена: ${price}грн.\n📅 Дней: ${days}`
+            );
+    }
 }

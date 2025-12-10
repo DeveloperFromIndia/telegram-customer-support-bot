@@ -8,6 +8,9 @@ import updateRoles from "@/utils/roles";
 const startCommand = (bot: Bot<ConfigContext>) => {
     bot.command("start", async (ctx) => {
         const telegramId = ctx.message?.from.id;
+        if (ctx.conversation) {
+            await ctx.conversation.exit("createTarifConversation");
+        }
         if (!telegramId)
             return ctx.reply("Something went wrong");
 

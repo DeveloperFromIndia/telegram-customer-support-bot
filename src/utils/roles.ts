@@ -10,7 +10,7 @@ const updateRoles = async (
             return error;
         });
 
-        if (user && data.count > 0) {
+        if (user && data && data.count > 0) {
             const userInCRM = data.data[0];
             const managerStatus = userInCRM.tags.find((tag: any) => tag.name === "manager");
 

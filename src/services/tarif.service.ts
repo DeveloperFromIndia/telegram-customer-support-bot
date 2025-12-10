@@ -5,11 +5,18 @@ import { Op } from "sequelize";
 class TarifService {
     /* true - status: 200 */
     async create(data: any) {
-        
+        const { price, days } = data;
+        const tarif = await TarifModel.create({
+            price,
+            days
+        });
+
+        return tarif?.toJSON() || null;
     }
 
     async find(id: number) {
-        
+        const tarif = await TarifModel.findByPk(id);
+        return tarif?.toJSON() || null;
     }
 
     async getPage({ page, count, order, filters, url }: paginationDataType) {
@@ -24,7 +31,7 @@ class TarifService {
     }
 
     async update(data: any) {
-        
+
     }
 }
 

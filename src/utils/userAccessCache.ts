@@ -16,11 +16,10 @@ async function userAccessCache(ctx: any, next: () => Promise<void>) {
 
     if (!cache || cache.expiresAt < now) {
         const user = await userService.find(telegramId);
-        // if (!user)
-            // return next();
+
         cache = {
-            isManager: user.isManager,
-            blocked: user.blocked,
+            isManager: user?.isManager,
+            blocked: user?.blocked,
             expiresAt: now + CACHE_TTL
         };
         userCache.set(telegramId, cache);

@@ -37,13 +37,13 @@ async function getPaginatedData({
 
     return {
         page,
-        total_pages,
+        total_pages: total_pages === 0 ? 1 : total_pages,
         total_count: res.length,
         result: res.map((p: any) => p.toJSON()),
         url,
         links: {
-            prev: page - 1 > 0 ? `${url} ${page - 1}` : null,
-            next: page - 1 > 0 ? `${url} ${page - 1}` : null,
+            prev: page - 1 > 0 ? `${url}:${page - 1}` : null,
+            next: page + 1 === total_pages ? `${url}:${page + 1}` : null,
         },
     }
 }

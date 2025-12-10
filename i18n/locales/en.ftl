@@ -36,3 +36,6 @@ user_field_username    = Username:
 user_field_phone       = Phone:
 user_field_id_in_crm   = CRM ID:
 user_field_createdAt   = Created at: 
+
+# -- scenes
+scenes_action_leave = leave

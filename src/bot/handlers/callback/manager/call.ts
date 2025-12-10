@@ -1,17 +1,15 @@
 import { actionsOnTheCall } from "@/bot/keyboards/inline/calls";
-import { actionsOnTheClient } from "@/bot/keyboards/inline/clients";
+import paginatedData from "@/bot/keyboards/inline/pagination";
 import { actionsInTheCall } from "@/bot/keyboards/reply/callsActions.keyboard";
 import { callView } from "@/bot/view/calls";
-import clientView from "@/bot/view/clients";
 import callService from "@/services/call.service";
 import userService from "@/services/user.service";
+import type { paginationDataType } from "@/utils/pagination";
+import type { Bot } from "grammy";
+import type { ConfigContext } from "i18n/config";
 
-import { type Bot } from "grammy"
-import type { ConfigContext } from "i18n/config"
 
-
-
-const managerActionsCallback = (bot: Bot<ConfigContext>) => {
+const callbackManagerCallActions = (bot: Bot<ConfigContext>) => {
     // Connect in call
     bot.callbackQuery(/^(\d+):c_call$/, async (ctx) => {
         const telegramId = Number(ctx.chat?.id);
@@ -60,59 +58,25 @@ const managerActionsCallback = (bot: Bot<ConfigContext>) => {
             await ctx.answerCallbackQuery();
         }
     });
-    // Get user info
-    bot.callbackQuery(/^(\d+):p_user$/, async (ctx) => {
+    bot.callbackQuery(/^p_call:(\d+)$/, async (ctx: any) => {
         try {
-            const telegramId = Number(ctx.match[1]);
-            const user = await userService.find(telegramId);
+            const pageNumber = parseInt(ctx.match[1], 10);
 
-            if (user) {
-                await ctx.reply(clientView(user, ctx.t), {
-                    reply_markup: actionsOnTheClient({ telegramId, blocked: user.blocked }, ctx.t)
-                });
-            }
+            const params: paginationDataType = { page: pageNumber, count: 5, url: "p_call", filters: { status: "waiting" } }
+            const res = await callService.getPage(params);
+
+            const format = (item: any) => `${item.days} - ${item.price}$`;
+            const kb = paginatedData(pageNumber, format, res);
 
             await ctx.answerCallbackQuery();
-        } catch (error) {
 
-        }
-    });
-    // Block user
-    bot.callbackQuery(/^(\d+):b_user$/, async (ctx) => {
-        try {
-            const id = Number(ctx.match[1]);
-            const user = await userService.find(id);
-            const updateDataSet = {
-                id,
-                blocked: !user.blocked,
-            };
-            const res = await userService.update(updateDataSet);
-            if (res) {
-                try {
-                    await ctx.editMessageText(clientView(res, ctx.t), {
-                        reply_markup: actionsOnTheClient({ telegramId: id, blocked: !user.blocked }, ctx.t)
-                    });
-                } catch (error) {
-                    // catching messages about zero fields editing 
-                }
-            }
-
-            await ctx.answerCallbackQuery();
-        } catch (error) {
-
-        }
-    });
-
-    bot.callbackQuery("a_tarif", async (ctx: any) => {
-        try {
-            await ctx.conversation.enter("createTarifConversation");
-
-            // createTarifConversation
-            await ctx.answerCallbackQuery();
+            await ctx.editMessageText(`${res.page} из ${res.total_pages}`, {
+                reply_markup: kb,
+            });
         } catch (error) {
 
         }
     });
 }
 
-export default managerActionsCallback;
+export default callbackManagerCallActions;
