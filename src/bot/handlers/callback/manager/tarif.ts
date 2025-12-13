@@ -26,7 +26,7 @@ const callbackManagerTarifActions = (bot: Bot<ConfigContext>) => {
             const params: paginationDataType = { page: pageNumber, count: 5, url: "p_tarif" };
             const res = await tarifService.getPage(params);
 
-            const format = (item: any) => `${item.days} - ${item.price}$`;
+            const format = (item: any) => `${item.name} (${item.periodMonths}) - ${item.price} ₴`;
             const kb = paginatedData(pageNumber, format, res, [
                 { text: ctx.t("add_tarifs"), callback_data: "a_tarif" }
             ]);

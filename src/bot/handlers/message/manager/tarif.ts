@@ -13,7 +13,7 @@ const messageManagerTarifActions = (bot: Bot<ConfigContext>) => {
         const params: paginationDataType = { page: 1, count: 5, url: "p_tarif" }
         const res = await tarifService.getPage(params);
 
-        const format = (item: any) => `${item.days} - ${item.price}$`;
+        const format = (item: any) => `${item.name} [${item.periodMonths}m.]  - ${item.price} ₴`;
         const kb = paginatedData(1, format, res, [
             { text: ctx.t("add_tarifs"), callback_data: "a_tarif" }
         ]);

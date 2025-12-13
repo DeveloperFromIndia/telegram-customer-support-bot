@@ -22,9 +22,11 @@ import messageManagerCallActions from "./handlers/message/manager/call";
 import messageManagerPaymentsActions from "./handlers/message/manager/payments";
 import messageManagerTarifActions from "./handlers/message/manager/tarif";
 import messageManagerUserActions from "./handlers/message/manager/user";
-import phoneRequest from "./handlers/message/phoneRequest";
-import clientsMessage from "./handlers/message/clientsActions";
-import transferMessage from "./handlers/message/call";
+import transferMessage from "./handlers/message/transferMessage";
+import messageClientCall from "./handlers/message/client/call";
+import messageClientAuth from "./handlers/message/client/auth";
+import callbackClientSubscription from "./handlers/callback/client/subscription";
+import messageClientSubscription from "./handlers/message/client/subscription";
 
 const bot = process.env.BOT_TOKEN ? new Bot<ConfigContext>(process.env.BOT_TOKEN) : null;
 
@@ -43,12 +45,14 @@ const setupBot = () => {
         startCommand,
         getChatIdCommand
     ], bot);
-    
+
     HandlersWrapper([
         // Manager
         callbackManagerTarifActions,
         callbackManagerCallActions,
         callbackManagerUserActions,
+        // Client
+        callbackClientSubscription,
         // Other
         plugCallback,
     ], bot);
@@ -59,11 +63,11 @@ const setupBot = () => {
         messageManagerPaymentsActions,
         messageManagerTarifActions,
         messageManagerUserActions,
-        
         // Clients
-        phoneRequest,
-        clientsMessage,
-        
+        messageClientAuth,
+        messageClientSubscription,
+        messageClientCall,
+
         // Utils
         transferMessage,
     ], bot);

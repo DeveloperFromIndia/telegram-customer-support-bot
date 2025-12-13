@@ -1,14 +1,14 @@
 import TarifModel from "@/database/models/Tarifs";
 import getPaginatedData, { type paginationDataType } from "@/utils/pagination";
-import { Op } from "sequelize";
 
 class TarifService {
     /* true - status: 200 */
     async create(data: any) {
-        const { price, days } = data;
+        const { price, name, periodMonths } = data;
         const tarif = await TarifModel.create({
+            name,
             price,
-            days
+            periodMonths,
         });
 
         return tarif?.toJSON() || null;
@@ -32,6 +32,15 @@ class TarifService {
 
     async update(data: any) {
 
+    }
+
+    async getTarifs() {
+        return await TarifModel.findAll({
+            where: {
+                isActive: true,
+            },
+            order: [["periodMonths", "ASC"]]
+        });
     }
 }
 

@@ -1,11 +1,12 @@
-import { Bot } from "grammy";
-import { type ConfigContext } from "i18n/config";
-import { UserDto } from "@/dto/user.dto";
+import { profileActionsView } from "@/bot/view/profile";
 import { createPereson, getPeople } from "@/http/API/clients";
 import userService from "@/services/user.service";
-import { profileActionsKeyboard } from "@/bot/keyboards/reply/profileActions.keyboard";
+import type { Bot } from "grammy";
+import type { ConfigContext } from "i18n/config";
 
-const phoneRequest = (bot: Bot<ConfigContext>) => {
+const GROUP_ID = Number(process.env.NOTIFICATION_GROUP_ID);
+
+const messageClientAuth = (bot: Bot<ConfigContext>) => {
     bot.on("message:contact", async (ctx) => {
         const { user_id, phone_number, first_name } = ctx.message.contact;
         if (!user_id)
@@ -59,17 +60,12 @@ const phoneRequest = (bot: Bot<ConfigContext>) => {
             };
             await userService.update(userData);
         }
-
-        await ctx.reply(ctx.t("finished_comparing_contact"), {
-            reply_markup: {
-                remove_keyboard: true
-            },
-        });
-
-        return await ctx.reply(ctx.t("profile_actions_title"), {
-            reply_markup: await profileActionsKeyboard(ctx.t, user_id) // user_id === telegram_id
-        });
+        
+        const [text, kb] = await profileActionsView(ctx.t, user_id);
+        return await ctx.reply(text, {
+            reply_markup: kb
+        })
     });
-};
+}
 
-export default phoneRequest;
+export default messageClientAuth;

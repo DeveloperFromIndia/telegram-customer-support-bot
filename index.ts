@@ -9,7 +9,7 @@ setupModels();
 (async function () {
     try {
         await sequelize.authenticate();
-        await sequelize.sync({ alter: true });
+        await sequelize.sync({});
         bot.start()
 
         console.log("</ Bot launched successfully >");

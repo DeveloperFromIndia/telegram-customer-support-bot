@@ -1,5 +1,5 @@
 
-import { profileActionsKeyboard } from "@/bot/keyboards/reply/profileActions.keyboard";
+import { profileActionsView } from "@/bot/view/profile";
 import { paginatedCalls } from "@/bot/view/calls";
 import accessMiddleware from "@/middleware/access";
 import callService from "@/services/call.service";
@@ -21,17 +21,19 @@ const messageManagerCallActions = (bot: Bot<ConfigContext>) => {
             reply_markup: kb,
         });
     });
-      bot.filter(hears("calls_action_finish"), accessMiddleware, async (ctx) => {
+    bot.filter(hears("calls_action_finish"), accessMiddleware, async (ctx) => {
         const telegramId = Number(ctx.chat.id);
         const call = await callService.inCall(telegramId);
 
         if (call) {
             await callService.update({ id: call.id, status: "finish" });
-            await ctx.reply("finish hardcode message", {
-                reply_markup: await profileActionsKeyboard(ctx.t, telegramId)
-            })
+            const [text, kb] = await profileActionsView(ctx.t, telegramId);
+            await ctx.reply(text, {
+                reply_markup: kb,
+            });
 
-            await sendMessage(call.clientId, { text: "hardcode msg" }, await profileActionsKeyboard(ctx.t, call.clientId));
+            const [client_text, client_kb] = await profileActionsView(ctx.t, call.clientId)
+            await sendMessage(call.clientId, { text: client_text }, client_kb);
         }
     });
 }

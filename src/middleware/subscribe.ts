@@ -1,17 +1,8 @@
+import userAccessCache from "@/utils/userAccessCache";
 
-// const requireActiveSubscription = async (ctx, next) => {
-//     const sub = ctx.state.subscription;
+const subscribeMiddleware = async (ctx: any, next: () => Promise<void>) => {
+    console.error("!!! implement subscribe middleware");
+    return next();
+};
 
-//     if (
-//         !sub ||
-//         sub.status !== "active" ||
-//         new Date(sub.current_period_end) < new Date()
-//     ) {
-//         await ctx.reply(
-//             "❌ Эта функция доступна только по активной подписке."
-//         );
-//         return;
-//     }
-
-//     await next(); 
-// };
+export default subscribeMiddleware;
